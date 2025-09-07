@@ -12,11 +12,13 @@ RUN apt-get update && \
 # Set Tesseract data path
 ENV TESSDATA_PREFIX=/usr/share/tesseract-ocr/4.00/tessdata
 
-# Download latest Tika server
+# Download Tika 3.x server (requires Java 11+)
 ENV TIKA_VERSION=3.1.0
-RUN curl -L -o /tika-server.jar https://downloads.apache.org/tika/${TIKA_VERSION}/tika-server-standard-${TIKA_VERSION}.jar
+RUN curl -fsSL -o /tika-server.jar \
+    https://repo1.maven.org/maven2/org/apache/tika/tika-server-standard/${TIKA_VERSION}/tika-server-standard-${TIKA_VERSION}.jar && \
+    echo "Downloaded Tika JAR:" && ls -lh /tika-server.jar
 
 EXPOSE 9998
 
-# ✅ Just start without any extra flags for Tika 3.x
+# Start Tika server
 CMD ["java", "-jar", "/tika-server.jar", "--host", "0.0.0.0"]
